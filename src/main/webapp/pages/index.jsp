@@ -58,7 +58,7 @@ app.config(function($routeProvider) {
     });
 });
 
-app.controller('userCtrl', function($scope, $http) {
+app.controller('userCtrl', function($scope, $http , $location) {
   $http({
     method : "GET",
       url : "/api/user/list"
@@ -143,7 +143,7 @@ app.controller('userCtrl', function($scope, $http) {
 
 
 
-app.controller('userAddCtrl', function($scope , $http) {
+app.controller('userAddCtrl', function($scope , $http , $location) {
   $scope.showVar = "";
   $scope.addVar = "true";
 
@@ -179,8 +179,87 @@ app.controller('userAddCtrl', function($scope , $http) {
     $scope.addVar = "true";
     $scope.userinfo.username = "";
     $scope.userinfo.password = "";
+    $scope.username = "";
+    $scope.password = "";
     $scope.msg = "";
-  }
+  },
+
+  $scope.deleteUser = function(user) {
+    console.log(user);
+    console.log("user id : " + user.id);
+        $http({
+            method : "POST",
+              url : "/api/user/delete",
+              responseType: 'text',
+              data:{id: user.id}
+
+          }).then(function mySuccess(response) {
+            console.log("success");
+            $scope.msg = response.data.msg;
+            //$location.path( "userlist" );
+            $scope.showVar = "";
+            $scope.addVar = "true";
+            $scope.username = "";
+            $scope.password = "";
+          }, function myError(response) {
+          console.log("error");
+          console.log(response)
+            $scope.msg = response.data.msg;
+          });
+      },
+
+      $scope.editUser = function(user) {
+          $scope.msg = "";
+          $scope.loadingMsg = "please wait....!!!";
+          $scope.username = "";
+          $scope.password = "";
+          $scope.loadingUserData = "true";
+
+            console.log(user);
+            console.log("user id : " + user.id);
+                $http({
+                    method : "POST",
+                      url : "/api/user/edit",
+                      responseType: 'text',
+                      data:{id: user.id}
+
+                  }).then(function mySuccess(response) {
+                    $scope.loadingMsg = "";
+                    $scope.userInfoUpdate = response.data.details;
+                    $scope.username = response.data.details.username;
+                    //$scope.password = response.data.details.password;
+                    $scope.loadingUserData = "";
+                  }, function myError(response) {
+                  console.log("error");
+                  console.log(response)
+                    $scope.msg = response.data.msg;
+                  });
+              },
+
+          $scope.updateUser = function(user) {
+          $scope.loadingMsg = "please wait....!!!";
+           $scope.loadingUserData = "true";
+                $http({
+                    method : "POST",
+                      url : "/api/user/update",
+                      responseType: 'text',
+                      data:{id: user.id , username: $scope.username , password : $scope.password}
+
+                  }).then(function mySuccess(response) {
+                    console.log("success");
+                    $scope.msg = response.data.msg;
+                    $scope.userinfo = response.data.info;
+                    $scope.showVar = "true";
+                    $scope.addVar = "";
+                    $scope.loadingMsg = "";
+                    $scope.loadingUserData = "";
+                    $("#closeUserEdit").click();
+                  }, function myError(response) {
+                  console.log("error");
+                  console.log(response)
+                    $scope.msg = response.data.msg;
+                  });
+              }
 });
 
 </script>

@@ -57,6 +57,8 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <button class="btn btn-primary" ng-click="addNewUser()">add new</button>
+                        <button class="btn btn-danger" ng-click="deleteUser(userinfo)">delete</button>
+                        <button class="btn btn-info" ng-click="editUser(userinfo)" data-toggle="modal" data-target="#editModal">edit</button>
                     </div>
                 </div>
             </div>
@@ -66,4 +68,49 @@
 <!--
 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
 -->
+
+    <!-- Modal -->
+    <div class="modal fade" id="editModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Edit User {{loadingMsg}}</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="username">username *:</label>
+                                        <input type="text" ng-disabled="loadingUserData" class="form-control" id="username"  ng-required="true" ng-model="username" placeholder="enter username">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="password">password *:</label>
+                                        <input type="password" ng-disabled="loadingUserData" class="form-control"  ng-required="true" id="password" ng-model="password" placeholder="enter password">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="closeUserEdit" class="btn btn-danger pull-left" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary pull-right" data-dismiss="modal" ng-disabled="loadingUserData" ng-click="updateUser(userInfoUpdate)">update changes</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 </div>

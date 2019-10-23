@@ -64,6 +64,7 @@ public class UserInfoRestController {
             UserInfo updatedUserInfo = userInfoRepository.save(previousUser);
             responseDto.setMsg("user successfully upadated");
             responseDto.setDetails(userInfoRepository.findAll());
+            responseDto.setInfo(updatedUserInfo);
             responseDto.setStatus("200");
             return new ResponseEntity<ResponseDto>(responseDto , HttpStatus.OK);
         }catch (Exception e){

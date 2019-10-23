@@ -8,10 +8,10 @@
         <version>2.1.8.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.user</groupId>
-    <artifactId>user</artifactId>
+    <groupId>com.angularboot</groupId>
+    <artifactId>angularboot</artifactId>
     <version>1.0</version>
-    <name>user</name>
+    <name>angularboot</name>
     <packaging>jar</packaging>
     <description>Demo project for Spring Boot</description>
 
