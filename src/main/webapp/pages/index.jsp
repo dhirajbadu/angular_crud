@@ -170,12 +170,10 @@ app.controller('userCtrl', function($scope, $http , $location , $compile) {
            $('#userListTable').DataTable( {
                    "data": userList,
                    "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
-                   var $injector = angular.element(document.body).injector();
-                     var scope = angular.element(document.body).scope();
-
-                     $injector.invoke(function($compile) {
-                       $compile(nRow)(scope);
-                     });
+                        $scope.content = nRow;
+                        var tblElem = angular.element($scope.content);
+                       var compileFn = $compile(tblElem);
+                       compileFn($scope);
                    }
                } );
        }
