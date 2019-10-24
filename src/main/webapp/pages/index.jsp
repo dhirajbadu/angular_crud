@@ -43,7 +43,13 @@
 </div>
 
 <script>
+var userListTables;
 
+$(document).ready(function() {
+
+
+
+});
 
 
 var app = angular.module("myApp", ["ngRoute"]);
@@ -64,6 +70,11 @@ app.config(function($routeProvider) {
 });
 
 app.controller('userCtrl', function($scope, $http , $location , $compile) {
+
+    if(userListTables === undefined){
+        userListTables = $('#userListTable').DataTable();
+    }
+
   $http({
     method : "GET",
       url : "/api/user/list"
@@ -87,7 +98,7 @@ app.controller('userCtrl', function($scope, $http , $location , $compile) {
           console.log("success");
           $scope.msg = response.data.msg;
           $scope.userList = response.data.details;
-          $scope.userDataTable(response.data , $scope.userDataTableMaker);
+          $scope.userDataTable(response.data.details , $scope.userDataTableMaker);
         }, function myError(response) {
         console.log("error");
         console.log(response)
@@ -160,14 +171,16 @@ app.controller('userCtrl', function($scope, $http , $location , $compile) {
 
                     resultList.push(temp);
                     console.log((i + 1) == userList.length);
-                    if((i + 1) == userList.length){
+                    if((i + 1) === userList.length){
+                        userListTables.destroy();
                         callback(resultList);
                     }
                 }
         },
 
         $scope.userDataTableMaker = function(userList) {
-           $('#userListTable').DataTable( {
+            console.log("datatable..!!");
+           userListTables = $('#userListTable').DataTable( {
                    "data": userList,
                    "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
                         $scope.content = nRow;
