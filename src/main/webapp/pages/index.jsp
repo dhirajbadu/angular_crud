@@ -4,11 +4,13 @@
 <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+<script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
 
 <style>
 .ng-hide:not(.ng-hide-animate) {
@@ -41,6 +43,9 @@
 </div>
 
 <script>
+
+
+
 var app = angular.module("myApp", ["ngRoute"]);
 app.config(function($routeProvider) {
     $routeProvider
@@ -58,30 +63,31 @@ app.config(function($routeProvider) {
     });
 });
 
-app.controller('userCtrl', function($scope, $http , $location) {
+app.controller('userCtrl', function($scope, $http , $location , $compile) {
   $http({
     method : "GET",
       url : "/api/user/list"
   }).then(function mySuccess(response) {
     console.log(response.data);
     $scope.userList = response.data;
+    $scope.userDataTable(response.data , $scope.userDataTableMaker);
   }, function myError(response) {
     console.log(response.statusText);
   });
 
-  $scope.deleteUser = function(user) {
-  console.log(user);
-  console.log("user id : " + user.id);
+  $scope.deleteUser = function(userId) {
+  console.log("user id : " + userId);
       $http({
           method : "POST",
             url : "/api/user/delete",
             responseType: 'text',
-            data:{id: user.id}
+            data:{id: userId}
 
         }).then(function mySuccess(response) {
           console.log("success");
           $scope.msg = response.data.msg;
           $scope.userList = response.data.details;
+          $scope.userDataTable(response.data , $scope.userDataTableMaker);
         }, function myError(response) {
         console.log("error");
         console.log(response)
@@ -89,20 +95,20 @@ app.controller('userCtrl', function($scope, $http , $location) {
         });
     },
 
-    $scope.editUser = function(user) {
+    $scope.editUser = function(userId) {
     $scope.msg = "";
     $scope.loadingMsg = "please wait....!!!";
     $scope.username = "";
     $scope.password = "";
     $scope.loadingUserData = "true";
 
-      console.log(user);
-      console.log("user id : " + user.id);
+      console.log(userId);
+      console.log("user id : " + userId);
           $http({
               method : "POST",
                 url : "/api/user/edit",
                 responseType: 'text',
-                data:{id: user.id}
+                data:{id: userId}
 
             }).then(function mySuccess(response) {
               $scope.loadingMsg = "";
@@ -130,6 +136,7 @@ app.controller('userCtrl', function($scope, $http , $location) {
               console.log("success");
               $scope.msg = response.data.msg;
               $scope.userList = response.data.details;
+              $scope.userDataTable(response.data.details , $scope.userDataTableMaker);
               $scope.loadingMsg = "";
               $scope.loadingUserData = "";
               $("#closeUserEdit").click();
@@ -138,7 +145,42 @@ app.controller('userCtrl', function($scope, $http , $location) {
             console.log(response)
               $scope.msg = response.data.msg;
             });
-        }
+        },
+
+        $scope.userDataTable = function(userList , callback) {
+            var resultList = [];
+
+                var i;
+                for (i = 0; i < userList.length; ++i) {
+                    var temp = [];
+                    temp.push(i + 1);
+                    temp.push(userList[i].username);
+                    temp.push(userList[i].password);
+                    temp.push("<a class='btn btn-danger btn-sm' ng-click='deleteUser("+userList[i].id+")'>delete</a>&nbsp;<button type='button' class='btn btn-primary btn-sm' data-toggle='modal' data-target='#editModal' ng-click='editUser("+userList[i].id+")'>edit</button>");
+
+                    resultList.push(temp);
+                    console.log((i + 1) == userList.length);
+                    if((i + 1) == userList.length){
+                        callback(resultList);
+                    }
+                }
+        },
+
+        $scope.userDataTableMaker = function(userList) {
+           $('#userListTable').DataTable( {
+                   "data": userList,
+                   "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+                   var $injector = angular.element(document.body).injector();
+                     var scope = angular.element(document.body).scope();
+
+                     $injector.invoke(function($compile) {
+                       $compile(nRow)(scope);
+                     });
+                   }
+               } );
+       }
+
+
 });
 
 
