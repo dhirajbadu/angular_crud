@@ -40,7 +40,7 @@ def image_crop(inputpath , outputPath , height , width):
     with open(inputpath, 'rb') as fd_img:
         img = Image.open(fd_img)
         img = resizeimage.resize_crop(img, [width, height])
-        img.save(outPutPath, img.format)
+        img.save(outputPath, img.format)
         fd_img.close()
 
 def main():
