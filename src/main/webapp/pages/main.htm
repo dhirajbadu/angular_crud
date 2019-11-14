@@ -1,7 +1,55 @@
-<h1>main</h1>
-<form method="POST" enctype="multipart/form-data" action="/user/upload">
-    <table>
-        <tr><td>File to upload:</td><td><input type="file" name="image" /></td></tr>
-        <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
-    </table>
-</form>
+<h1>main http://foliotek.github.io/Croppie/</h1>
+<div class="row">
+    <div class="col-md-6">
+        <form method="POST" enctype="multipart/form-data" action="/user/upload">
+            <table>
+                <tr><td>File to upload:</td><td><input type="file" name="image" id="imagePath" /></td></tr>
+                <tr><td></td><td><input type="submit" value="Upload" /></td></tr>
+            </table>
+        </form>
+    </div>
+
+    <div class="col-md-6">
+        <img src="" width="200" height="200" class="my-image"  />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="demo">
+
+        </div>
+    </div>
+</div>
+<br>
+<div id="disp_tmp_path"></div>
+<script>
+
+$('input[type=file]').change(function () {
+    var path = URL.createObjectURL(event.target.files[0]);
+
+    $("img").fadeIn("fast").attr('src',URL.createObjectURL(event.target.files[0]));
+
+    //$("#disp_tmp_path").html("Temporary Path(Copy it and try pasting it in browser address bar) --> <strong>["+path+"]</strong>");
+    crop(path);
+
+});
+function crop(url){
+//$('.my-image').croppie();
+var basic = $('.demo').croppie({
+    viewport: {
+        width: 150,
+        height: 200
+    }
+});
+basic.croppie('bind', {
+    url: url,
+    points: [77,469,280,739]
+});
+//on button click
+basic.croppie('result', 'html').then(function(html) {
+    // html is div (overflow hidden)
+    // with img positioned inside.
+});
+}
+</script>
